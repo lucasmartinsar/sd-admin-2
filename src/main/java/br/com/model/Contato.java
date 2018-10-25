@@ -14,7 +14,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 @Table(name="contatos")
 public class Contato implements Serializable {
 	
-	//gitkraken
 	private static final long serialVersionUID = 1L;
 	
 	@Id
@@ -26,6 +25,8 @@ public class Contato implements Serializable {
 	
 	@NotEmpty(message="Email é obrigatório")
 	private String email;
+	
+	private boolean ativo = true;
 
 	public Long getId() {
 		return id;
@@ -49,6 +50,15 @@ public class Contato implements Serializable {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	
+
+	public boolean isAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(boolean ativo) {
+		this.ativo = ativo;
 	}
 
 	@Override
