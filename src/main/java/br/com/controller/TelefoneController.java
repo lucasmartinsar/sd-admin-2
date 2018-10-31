@@ -19,72 +19,86 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import br.com.model.Contato;
 import br.com.model.Empresa;
 import br.com.model.Fornecedor;
+import br.com.model.Funcionario;
+import br.com.model.Telefone;
 import br.com.service.ContatoService;
 import br.com.service.EmpresaService;
 import br.com.service.FornecedorService;
+import br.com.service.FuncionarioService;
+import br.com.service.TelefoneService;
 
 @Controller
-@RequestMapping("/contatos")
-public class ContatosController {
+@RequestMapping("/telefones")
+public class TelefoneController {
 	
 	@Autowired
-	private ContatoService service;
+	private TelefoneService service;
+	
+	@Autowired
+	private ContatoService contatoService;
 	
 	@Autowired
 	private EmpresaService empresaService;
 	
 	@Autowired
+	private FuncionarioService funcionarioService;
+	
+	@Autowired 
 	private FornecedorService fornecedorService;
 	
 	@GetMapping
 	public ModelAndView listar() {
-		List<Contato> lista = service.list();
+		List<Telefone> lista = service.list();
 		
-		ModelAndView mv = new ModelAndView("pages/contato/contatos");		
-		mv.addObject("contatos", lista);
+		ModelAndView mv = new ModelAndView("pages/telefone/telefones");		
+		mv.addObject("telefones", lista);
 		
 		return mv;
 	}
 	
 	@GetMapping("/delete/{id}")
 	public ModelAndView excluir(@PathVariable("id") Long id, RedirectAttributes attributes) {
-		ModelAndView mv = new ModelAndView("redirect:/contatos");
+		ModelAndView mv = new ModelAndView("redirect:/telefones");
 		this.service.remove(id);
-		attributes.addFlashAttribute("removido", "Contato removido com sucesso!");
+		attributes.addFlashAttribute("removido", "Telefone removido com sucesso!");
 		return mv;
 	}
 	
 	@GetMapping("/edit/{id}")
 	public ModelAndView edit(@PathVariable("id") Long id) {
-		Contato contato = this.service.getById(id); 
+		Telefone telefone = this.service.getById(id); 
 
-		return novo(contato);
+		return novo(telefone);
 	}
 	
 	@GetMapping("/novo")
-	public ModelAndView novo(Contato contato) {
+	public ModelAndView novo(Telefone telefone) {
+		List<Contato> contatos = contatoService.list();
 		List<Empresa> empresas = empresaService.list();
-		List<Fornecedor> fornecedor = fornecedorService.list();
+		List<Funcionario> funcionarios = funcionarioService.list();
+		List<Fornecedor> fornecedores = fornecedorService.list();
 		
 		HashMap<String, Object> dados = new HashMap<String, Object>();
-        dados.put("contato", contato);
+		dados.put("telefone", telefone);
+        dados.put("contatos", contatos);
         dados.put("empresas", empresas);
-        dados.put("fornecedores", fornecedor);
+        dados.put("funcionarios", funcionarios);
+        dados.put("fornecedores", fornecedores);
         
-        return new ModelAndView("pages/contato/novo",dados);
+        return new ModelAndView("pages/telefone/novo",dados);
 	}
 	
 	@PostMapping("/save")
-	public ModelAndView salvar(@Valid Contato contato, BindingResult result, 
+	public ModelAndView salvar(@Valid Telefone telefone, BindingResult result, 
 			Model model, RedirectAttributes attributes){
-		ModelAndView mv = new ModelAndView("redirect:/contatos");
+		ModelAndView mv = new ModelAndView("redirect:/telefones");
 		
 		if (result.hasErrors()) {
-			return novo(contato);
+			return novo(telefone);
 		}
 
-		attributes.addFlashAttribute("mensagem", "Contato salvo com sucesso!");
-		this.service.save(contato);
+		attributes.addFlashAttribute("mensagem", "Telefone salvo com sucesso!");
+		this.service.save(telefone);
 		return mv;
 	}
 }
